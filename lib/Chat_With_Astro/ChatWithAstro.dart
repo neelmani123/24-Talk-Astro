@@ -64,7 +64,8 @@ class _ChatNowScreenState extends State<ChatNowScreen> {
             child: CircularProgressIndicator(),
           ),
         ):ListView.builder(
-            itemCount: details==null?Container():details.length-1,
+            itemCount: details==null?Container(
+            ):details.length-1,
             itemBuilder: (BuildContext context,int index){
               return Container(
                 margin: EdgeInsets.only(top: 10),
