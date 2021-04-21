@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:online_astro24/LogIn_SignUp_Otp/SignUp.dart';
 import 'package:online_astro24/Modal/EditProfileModal.dart';
 import 'package:online_astro24/Modal/GetProfileModal.dart';
+import 'package:online_astro24/Modal/HorosCopeModel.dart';
 import 'package:online_astro24/Modal/LoginModal.dart';
 import 'package:online_astro24/Modal/SendOtpModal.dart';
 import 'package:online_astro24/helper/api_heper.dart';
@@ -15,6 +16,7 @@ import 'package:online_astro24/Modal/HomeModal.dart';
 import 'package:online_astro24/Modal/CreateUserModel.dart';
 import 'package:online_astro24/Modal/UserListData.dart';
 import 'package:online_astro24/Modal/EditUserListModel.dart';
+import 'package:online_astro24/Modal/AddToCart.dart';
 
 
 class HttpService {
@@ -84,6 +86,7 @@ class HttpService {
   }
   Future<CreateUserModel> createUser({String user_id,String name,String gender,String date_of_birth,String time_of_birth,String place_of_birth,String relationship})async
   {
+    await _init();
     Map reqBody={
       "user_id":user_id,
       "name":name,
@@ -98,6 +101,39 @@ class HttpService {
       return CreateUserModel.fromJson(response);
     }
     catch(e)
+    {
+      return null;
+    }
+  }
+
+  //Add To Card
+  Future<AddToCart>addToCard({String user_id,String productID})async
+  {
+    Map reqBody={
+      "user_id":user_id,
+      "productID":productID
+    };
+    final response=await _apiHelper.post('add_to_cart', reqBody);
+    try{
+      return AddToCart.fromJson(response);
+    }
+    catch(e)
+    {
+      return null;
+    }
+
+  }
+  Future <HorosCopeModel> horos({String sign}) async
+  {
+    Map reqBody={
+      "sign":sign,
+    };
+    final response=await _apiHelper.post('horoscope', reqBody);
+    try
+        {
+          return HorosCopeModel.fromJson(response);
+        }
+        catch(e)
     {
       return null;
     }

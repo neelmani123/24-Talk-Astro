@@ -5,9 +5,14 @@ import 'package:online_astro24/PaymentScreen/finalPaymentScreen.dart';
 import 'package:online_astro24/providers/products.dart';
 import 'package:online_astro24/utils/setup.dart';
 import 'package:provider/provider.dart';
+import 'package:http/http.dart'as http;
+import 'dart:convert';
 
 
 class ProductDetails extends StatefulWidget {
+  final String id;
+  final String text;
+  ProductDetails({this.id,this.text});
 
   static const String productDetailScreen = "/productDetailScreen";
 
@@ -16,8 +21,6 @@ class ProductDetails extends StatefulWidget {
 }
 
 class _ProductDetailsState extends State<ProductDetails> {
-
-
 
   int _current = 0;
   List imgList = [
@@ -35,16 +38,41 @@ class _ProductDetailsState extends State<ProductDetails> {
       }
     return result;
   }
+  bool _isLoading=true;
+  List details1=[];
+  //Get Product All Details from API
+  Future getProductDetails() async
+  {
+    Map<String,String>headers={'Content-Type':'application/json'};
+    final res=jsonEncode({"productID":widget.id});
+    var response=await http.post("https://talkastro.devclub.co.in/userapi/product_details",
+        headers:headers, body: res);
+    Map data=json.decode(response.body);
+    setState(() {
+     var details=data['product_details'];
+      print("Details Is:${details}");
+      //details1.add(details1);
+      _isLoading=false;
+    });
+
+
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    getProductDetails();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
 
     final productId = ModalRoute.of(context).settings.arguments as String;
-    final loadedProducts = Provider.of<Products>(context).findById(productId);
+    //final loadedProducts = Provider.of<Products>(context).findById(productId);
 
     return Scaffold(
       backgroundColor: Color(blueGreyColor),
       appBar: AppBar(
-        title: Text(loadedProducts.title),
+        title: Text(widget.text),
         backgroundColor: Color(pinkColor),
       ),
       body: Column(
@@ -55,6 +83,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                 Stack(
                   children: [
                     Container(
+                      //width: MediaQuery.of(context).size.width,
                       height: 800,
                       decoration: BoxDecoration(
                         image: DecorationImage(

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:online_astro24/DrawerContent/TransactionHistory.dart';
 import 'package:online_astro24/LogIn_SignUp_Otp/Login.dart';
@@ -13,7 +15,44 @@ import 'package:online_astro24/DrawerContent/UserList.dart';
 import 'package:online_astro24/DrawerContent/Question_history.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class CustomDrawer extends StatelessWidget {
+class CustomDrawer extends StatefulWidget {
+  @override
+  _CustomDrawerState createState() => _CustomDrawerState();
+}
+
+class _CustomDrawerState extends State<CustomDrawer> {
+  String  userID = '';
+  String name = '';
+  String countryCode = '';
+  String _deviceType = 'WEB';
+  String phone = '';
+  String email = '';
+  String image = '';
+
+  Future _init() async {
+    final _prefs = await SharedPreferences.getInstance();
+    setState(() {
+      phone = _prefs.getString('mobile') ?? '';
+      email = _prefs.getString('email') ?? '';
+      image = _prefs.getString('image') ?? '';
+      name = _prefs.getString('name') ?? '';
+      print("Name is:${name}");
+    });
+    if (Platform.isAndroid) {
+      _deviceType = 'Android';
+    } else if (Platform.isIOS) {
+      _deviceType = 'IOS';
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    _init();
+    super.initState();
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -54,14 +93,14 @@ class CustomDrawer extends StatelessWidget {
                       ),
                       Container(
                         child: Text(
-                          "Anamika",
+                          "${name}",
                           style: TextStyle(color: Colors.white, fontSize: 15),
                         ),
                       ),
                       Container(
                         margin: EdgeInsets.only(top: 5),
                         child: Text(
-                          "Jaituteja90@gmail.com",
+                          "${email}",
                           style: TextStyle(color: Colors.white, fontSize: 15),
                         ),
                       ),

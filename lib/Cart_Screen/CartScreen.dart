@@ -23,8 +23,6 @@ class _CartScreenState extends State<CartScreen> {
      "text",
      "text",
    ];
-
-
     return Scaffold(
         appBar: AppBar(
           title: Text("My Cart"),

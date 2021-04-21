@@ -149,7 +149,7 @@ class _LoginState extends State<Login> {
               InkWell(
                 onTap: ()
                 {
-                  Navigator.push(context, MaterialPageRoute(builder: (ctx) => Home()));
+                 /* Navigator.push(context, MaterialPageRoute(builder: (ctx) => Home()));*/
                 },
                 child: Container(
                   margin: EdgeInsets.only(right: 20,bottom: 10),

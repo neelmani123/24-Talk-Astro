@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:online_astro24/DrawerContent/UserList.dart';
 import 'package:online_astro24/httpHelper/httpHelper.dart';
 import 'package:online_astro24/utils/setup.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 class CreateUser extends StatefulWidget {
@@ -26,6 +27,7 @@ class _CreateUserState extends State<CreateUser> {
   final TextEditingController _relationShipStatus = TextEditingController();
   final TextEditingController _placeOfBirth = TextEditingController();
   bool isLoading;
+  String userId1="";
 
   var _currencies = [
     "Wife",
@@ -94,7 +96,9 @@ class _CreateUserState extends State<CreateUser> {
     setState(() {
       isLoading = true;
     });
-    var res = await _httpService.createUser(user_id:"12",name: _firstNameController.text,date_of_birth: _dob.text, time_of_birth: _time.text, place_of_birth: "Noida", gender: _gender.text,relationship: _relationShipStatus.text);
+    final _prefs = await SharedPreferences.getInstance();
+    userId1 = _prefs.getString('userID') ?? '';
+    var res = await _httpService.createUser(user_id:userId1,name: _firstNameController.text,date_of_birth: _dob.text, time_of_birth: _time.text, place_of_birth: "Noida", gender: _gender.text,relationship: _relationShipStatus.text);
     if(res.result == "success")
     {
       print(res.message);

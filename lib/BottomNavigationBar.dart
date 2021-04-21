@@ -77,14 +77,16 @@ class _BottomNavigationState extends State<BottomNavigation> with SingleTickerPr
               SizedBox(height: 2,),
               isActive ? Image.asset(iconListActive[index], height: 35,) : Image.asset(iconList[index], height: 15,),
               const SizedBox(height: 4),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Expanded(
-                  child: AutoSizeText(
-                    iconTextList[index],
-                    maxLines: 1,
-                    style: TextStyle(color: color),
-                    group: autoSizeGroup,
+              Flexible(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: Expanded(
+                    child: AutoSizeText(
+                      iconTextList[index],
+                      maxLines: 1,
+                      style: TextStyle(color: color),
+                      group: autoSizeGroup,
+                    ),
                   ),
                 ),
               )

@@ -7,6 +7,10 @@ import 'package:online_astro24/providers/products.dart';
 import 'package:online_astro24/utils/badge.dart';
 import 'package:online_astro24/utils/setup.dart';
 import 'package:provider/provider.dart';
+import 'package:http/http.dart'as http;
+import 'dart:convert';
+
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CategoryMall extends StatefulWidget {
   final String id;
@@ -21,17 +25,42 @@ class CategoryMall extends StatefulWidget {
 }
 
 class _CategoryMallState extends State<CategoryMall> {
+  bool _isLoading=true;
+  List details1=[];
+ String quantity="";
 
-
-
-
-
+  //Api for the categoryMall Details
+  Future getCategory_details() async
+  {
+    final _prefs = await SharedPreferences.getInstance();
+    print("Qtycskhck${quantity}");
+    Map<String,String>headers={'Content-Type':'application/json'};
+    final res=jsonEncode({"categoryID":widget.id});
+    var response=await http.post("https://talkastro.devclub.co.in/userapi/get_category_product",
+        headers:headers, body: res);
+    Map data=json.decode(response.body);
+    setState(() {
+      quantity = _prefs.getString('qty1') ?? '';
+       details1=data['category'] as List;
+       print("Details Is:${details1}");
+       details1.add(details1);
+       _isLoading=false;
+      });
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    setState(() {
+      getCategory_details();
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
 
-    final productData = Provider.of<Products>(context);
-    final products = productData.items();
+  //  final productData = Provider.of<Products>(context);
+    //final products = productData.items();
 
     return Scaffold(
       appBar: AppBar(
@@ -45,7 +74,7 @@ class _CategoryMallState extends State<CategoryMall> {
         actions: [
           Badge(child: IconButton(icon: Icon(Icons.shopping_cart), onPressed: (){
             Navigator.push(context, MaterialPageRoute(builder: (ctx) => CartScreen()));
-          }), value: "2",color: Color(blueGreyColor),),
+          }), value: quantity==null?0:quantity,color: Color(blueGreyColor),),
         ],
       ),
       body: Container(
@@ -86,7 +115,9 @@ class _CategoryMallState extends State<CategoryMall> {
                       )),
                 ),
               ),
-              Expanded(
+              _isLoading?Container(child: Center(
+                child: CircularProgressIndicator(),
+              ),):Expanded(
                 child: ListView(
                   children: [
                     GridView.builder(
@@ -94,8 +125,8 @@ class _CategoryMallState extends State<CategoryMall> {
                       shrinkWrap: true,
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2, childAspectRatio: 0.72),
-                      itemCount: products.length,
-                      itemBuilder: (context, i) => ProductItem(id: products[i].id, title: products[i].title, imageUrl: products[i].imageUrl, price: products[i].price)
+                      itemCount: details1.length-1,
+                      itemBuilder: (BuildContext context, int index) => ProductItem(id: details1[index]['productID'], title: details1[index]['meta_title'], imageUrl: details1[index]['image'], price: details1[index]['actual_price']),
                     )
                   ],
                 ),

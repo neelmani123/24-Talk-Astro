@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:online_astro24/CategoryShopMall.dart';
 import 'package:online_astro24/DrawerContent/MyWalletScreen.dart';
 import 'package:online_astro24/HoroscopeScreen/SignDetailsScreen.dart';
 import 'package:online_astro24/Notification/NotificationScreen.dart';
@@ -14,6 +15,8 @@ import 'package:online_astro24/Talk_To_Astrologer/Talk_to_Astro.dart';
 import 'package:online_astro24/Astro_Video_Call/Astro_Video_Call.dart';
 import 'package:online_astro24/AskQuestion/Ask_Question_Astro.dart';
 import 'package:online_astro24/Modal/HomeModal.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 
 
@@ -115,6 +118,20 @@ class _HomeState extends State<Home> {
     });
   }
 
+  List details=[];
+//Api is use of Shoppinng Mall List
+  Future getShopdetails()async
+  {
+     var response=await http.get("https://talkastro.devclub.co.in/userapi/get_shop_category");
+     Map data=json.decode(response.body);
+     var respon=data['result'];
+     details=data['category'] as List;
+     print(details);
+     setState(() {
+       details.add(data);
+     });
+
+  }
 
 
 
@@ -124,6 +141,7 @@ class _HomeState extends State<Home> {
     // TODO: implement initState
     super.initState();
     callWebService();
+    getShopdetails();
   }
   @override
   Widget build(BuildContext context) {
@@ -221,7 +239,8 @@ class _HomeState extends State<Home> {
                         isLoading == true ? Container():Container(
                           margin: EdgeInsets.only(left: 8),
                           child: Text(
-                            "\u{20B9}${homeData.user.wallet}",
+                            "\u{20B9}${homeData.user.wallet??''}",
+                            //"30",
                             style: TextStyle(color: Colors.white, fontSize: 18),
                           ),
                         ),
@@ -327,7 +346,7 @@ class _HomeState extends State<Home> {
                         itemBuilder: (ctx, i) => Container(
                           child: InkWell(
                             onTap: () {
-                              Navigator.push(context, MaterialPageRoute(builder: (ctx) => SignDetailsScreen(imageUrl: sign[i]["images"],)));
+                              Navigator.push(context, MaterialPageRoute(builder: (ctx) => SignDetailsScreen(imageUrl: sign[i]["images"],title:sign[i]["title"])));
                             },
                             child: Container(
                               child: Column(
@@ -544,7 +563,7 @@ class _HomeState extends State<Home> {
                       child: Container(
                         child: ListView.builder(
                           scrollDirection: Axis.horizontal,
-                          itemCount: shopping.length,
+                          itemCount: 3,
                           itemBuilder: (ctx, i) => Container(
                             margin:
                             EdgeInsets.symmetric(horizontal: 5, vertical: 5),
@@ -560,28 +579,35 @@ class _HomeState extends State<Home> {
                               ],
                             ),
                             padding:
-                            EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-                            child: Column(
-                              children: [
-                                Image.asset(
-                                  shopping[i]["images"],
-                                  height: 100,
-                                ),
-                                InkWell(
-                                  onTap: () {
-                                    // Navigator.push(context, MaterialPageRoute(builder: (ctx) => ShoppingMall(id: shopping[i]['id'],imageUrl:shopping[i]['images'],text: shopping[i]["text"],)));
-                                  },
-                                  child: Container(
-                                      margin: EdgeInsets.only(top: 15),
-                                      child: Text(
-                                        shopping[i]["text"],
-                                        style: TextStyle(
-                                            color: Color(pinkColor),
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 17),
-                                      )),
-                                )
-                              ],
+                            EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                            child: Expanded(
+                              child: Column(
+                                children: [
+                                  Image.asset(
+                                    shopping[i]["images"],
+                                    height: 100,
+                                  ),
+                                  InkWell(
+                                    onTap: () {
+                                     print(details[i]['categoryID']);
+                                     Navigator.push(context, MaterialPageRoute(
+                                         builder: (ctx) =>
+                                             CategoryMall(
+                                               id: details[i]['categoryID'],text: details[i]['categoryname'],))
+                                     );
+                                    },
+                                    child: Container(
+                                        margin: EdgeInsets.only(top: 15),
+                                        child: Text(
+                                        details[i]['categoryname'],
+                                          style: TextStyle(
+                                              color: Color(pinkColor),
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 17),
+                                        )),
+                                  )
+                                ],
+                              ),
                             ),
                           ),
                         ),

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:clipboard/clipboard.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:dotted_border/dotted_border.dart';
@@ -13,6 +14,8 @@ import 'package:share/share.dart';
 import 'dart:io';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:ui';
+import 'package:dio/dio.dart';
+//import 'package:path/path.dart';
 
 class ProfileScreen extends StatefulWidget {
   static const String profile = "Profile";
@@ -30,23 +33,54 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final ImagePicker _picker = ImagePicker();
   PickedFile _imageFiler;
   String profile;
+  String userId1="";
   GetProfileModal profileData;
   HttpService _httpService = HttpService();
   bool isLoading;
   bool isLoading1;
 
-
+  //Here get Image from Camera and Gallery
   void getImage(source) async {
     final pickerFile = await _picker.getImage(
       source: source,
     );
-
     setState(() {
       _imageFiler = pickerFile;
     });
-
     final prefs = await SharedPreferences.getInstance();
     prefs.setString("profile", _imageFiler.path);
+  }
+  //Here uploadImage Api from Dio Multipart
+  Future _uploadImage()async
+  {
+    isLoading=true;
+    final _prefs = await SharedPreferences.getInstance();
+    userId1 = _prefs.getString('userID') ?? '';
+    String fileName1 = _imageFiler.path.split('/').last;
+    try {
+      FormData formData = new FormData.fromMap({
+        "user_id": userId1,
+        "image":await  MultipartFile.fromFile(
+            _imageFiler.path,filename: fileName1)
+      });
+      Response response = await Dio().post(
+          "https://talkastro.devclub.co.in/userapi/edit_profile_photo",
+          data: formData);
+      print("File Upload Response $response");
+      Map data=jsonDecode(response.data);
+      var result=data['result'];
+      var sms=data['message'];
+      print("Result is:${result}");
+      if(result=="success")
+        {
+          setState(() {
+            isLoading=false;
+            _scaffoldKey.currentState.showSnackBar(new SnackBar(content: new Text(sms)));
+          });
+        }
+    } catch (e) {
+      print("Exception caught $e");
+    }
   }
 
   getDataFromPref() async {
@@ -56,34 +90,34 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
- callWebService() async
- {
+  callWebService() async
+  {
 
-   setState(() {
-     isLoading = true;
-   });
+    setState(() {
+      isLoading = true;
+    });
 
-   var res = await _httpService.getProfile();
-   if(res.result == "true")
-     {
-        profileData = res;
-        _nameController.text = res.user.name;
-        _emailController.text = res.user.email;
-        _dob.text = res.user.dob;
-        _mobileNumber.text = res.user.contact_no;
-        _timeOfBirth.text = res.user.birth_time;
-        _gender.text = res.user.gender;
-     }
-   else
-     {
-       print("Profile Api Not Working");
-       return ;
-     }
+    var res = await _httpService.getProfile();
+    if(res.result == "true")
+    {
+      profileData = res;
+      _nameController.text = res.user.name;
+      _emailController.text = res.user.email;
+      _dob.text = res.user.dob;
+      _mobileNumber.text = res.user.contact_no;
+      _timeOfBirth.text = res.user.birth_time;
+      _gender.text = res.user.gender;
+    }
+    else
+    {
+      print("Profile Api Not Working");
+      return ;
+    }
 
-   setState(() {
-     isLoading = false;
-   });
- }
+    setState(() {
+      isLoading = false;
+    });
+  }
 
 
 
@@ -469,15 +503,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         isLoading1 = true;
                       });
 
-
-
-                       await _httpService.updateProfile(name: _nameController.text,email: _emailController.text,dob: _dob.text,gender: _gender.text,timeOfBirth: _timeOfBirth.text);
-
+                      await _httpService.updateProfile(name: _nameController.text,email: _emailController.text,dob: _dob.text,gender: _gender.text,timeOfBirth: _timeOfBirth.text);
+                      _uploadImage();
                       setState(() {
                         isLoading1 = false;
                       });
 
-                      _scaffoldKey.currentState.showSnackBar(new SnackBar(content: new Text("Updated Successfully")));
+                     // _scaffoldKey.currentState.showSnackBar(new SnackBar(content: new Text("Updated Successfully")));
 
 
                     },
@@ -552,8 +584,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                   FlutterClipboard.copy('GROGRY12');
                                                   ScaffoldMessenger.of(context)
                                                       .showSnackBar(SnackBar(
-                                                          content: Text(
-                                                              "Refferal code copies")));
+                                                      content: Text(
+                                                          "Refferal code copies")));
                                                 }))
                                       ],
                                     )),
@@ -618,6 +650,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 onPressed: () {
                   getImage(ImageSource.gallery);
                   Navigator.pop(context);
+
                 },
                 label: Text("Gallery",style: TextStyle(color: Colors.black),),
               ),

@@ -10,6 +10,7 @@ import 'package:online_astro24/utils/setup.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:online_astro24/Modal/UserListData.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UserList extends StatefulWidget {
   static const String userList = "userList";
@@ -23,21 +24,37 @@ class _UserListState extends State<UserList> {
   DateTime currentVale = DateTime.now();
   bool _isLoading=true;
   List details=[];
+  List<User> data=[];
+ String userId1="";
+  String _deviceType = 'WEB';
   HttpService _httpService = HttpService();
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     getUserList();
+   // getUserList1();
   }
+
+ /* getUserList1()async
+  {
+    var res = await _httpService.userList(user_id:"30");
+    print(res.name);
+    print("Ddhgfjgjjgfs is:${res.toJson()}");
+    setState(() {
+   Map data=res.toJson();
+
+    });
+  }*/
 
   Future getUserList() async
   {
+    final _prefs = await SharedPreferences.getInstance();
+    userId1 = _prefs.getString('userID') ?? '';
     Map<String,String>headers={'Content-Type':'application/json'};
-    final res=jsonEncode({"user_id":"12"});
+    final res=jsonEncode({"user_id":userId1});
     var response=await http.post("https://talkastro.devclub.co.in/userapi/user_profile",
         headers:headers, body: res);
-    String res1=response.body;
     Map data=json.decode(response.body);
     //print(data);
     var respon=data['result'];
@@ -325,7 +342,7 @@ class _UserListState extends State<UserList> {
           children: [
             Expanded(
               child: ListView.builder(
-                itemCount: details==null?Container():details.length,
+                itemCount: details==null?Container():details.length-1,
                 itemBuilder: (BuildContext context,int index)
                 {
                   return  Container(

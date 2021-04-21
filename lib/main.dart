@@ -77,7 +77,7 @@ class Myapp extends StatelessWidget{
           ProfileScreen.profile:(context) => ProfileScreen(),
           UserList.userList:(context) => UserList(),
           QuestionHistory.questionHistory:(context) => QuestionHistory(),
-          ProductDetails.productDetailScreen:(context) => ProductDetails(),
+         // ProductDetails.productDetailScreen:(context) => ProductDetails(),
         },
       ),
     );

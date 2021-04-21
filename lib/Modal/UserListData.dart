@@ -1,33 +1,28 @@
 class UserListData
 {
-  String result;
-  String message;
+  String user_id;
   String name;
-  String relation_ship;
   String gender;
   String date_of_birth;
-  String birth_time;
-  String place;
-  User user;
-  String user_profile;
-  UserListData({this.result,this.message,this.name,this.relation_ship,this.gender,this.date_of_birth,this.birth_time,this.place,this.user,this.user_profile});
+  String time_of_birth;
+  String place_of_birth;
+  String relationship;
+  String result;
+  String message;
+  List user_profile;
+  UserListData({this.result,this.message,this.user_profile,this.name,this.gender,this.date_of_birth,this.place_of_birth,this.time_of_birth,this.relationship});
   factory UserListData.fromJson(Map<String, dynamic> json) {
     return UserListData(
       message: json['message'],
       result: json['result'],
-      user: json['user_profile'] != null ? User.fromJson(json['user_profile']) : null,
+      user_profile: List<UserListData>.from(json["User"].map((x) => User.fromJson(x))),
     );
   }
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['message'] = this.message;
-    data['result'] = this.result;
-    data['user_profile']=this.user_profile;
-    if (this.user != null) {
-      data['user'] = this.user.toJson();
-    }
-    return data;
-  }
+  Map<String, dynamic> toJson() =>{
+   "result":result,
+    "message":message,
+    "user_profile":List<dynamic>.from(user_profile.map((e) => e.toJson())),
+  };
 }
 
 class User {

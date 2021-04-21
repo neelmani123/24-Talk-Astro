@@ -85,7 +85,7 @@ class CartData extends StatelessWidget {
                           )),
                     ],
                   ),
-                  InkWell(
+                  /*InkWell(
                     onTap: () {
                       cartBottomSheet(context);
                     },
@@ -105,7 +105,7 @@ class CartData extends StatelessWidget {
                         ],
                       ),
                     ),
-                  )
+                  )*/
                 ],
               ),
             )
