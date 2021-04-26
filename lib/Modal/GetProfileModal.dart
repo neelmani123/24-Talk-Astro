@@ -41,8 +41,9 @@ class User {
     String updated_on;
     String userPID;
     String user_id;
+    String image;
 
-    User({this.added_on, this.address, this.birth_place, this.birth_time, this.contact_no, this.dob, this.email, this.gender, this.name, this.relationship, this.updated_on, this.userPID, this.user_id});
+    User({this.added_on, this.address, this.birth_place, this.birth_time, this.contact_no, this.dob, this.email, this.gender, this.name, this.relationship, this.updated_on, this.userPID, this.user_id,this.image});
 
     factory User.fromJson(Map<String, dynamic> json) {
         return User(
@@ -59,6 +60,7 @@ class User {
             updated_on: json['updated_on'],
             userPID: json['userPID'],
             user_id: json['user_id'],
+            image: json['user_image'],
         );
     }
 
@@ -77,6 +79,7 @@ class User {
         data['updated_on'] = this.updated_on;
         data['userPID'] = this.userPID;
         data['user_id'] = this.user_id;
+        data['user_image']=this.image;
         return data;
     }
 }

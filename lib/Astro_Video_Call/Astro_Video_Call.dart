@@ -81,7 +81,7 @@ class _AstroVideoCallState extends State<AstroVideoCall> {
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (ctx) => AstroVideoDetailsScreen()));
+                                        builder: (ctx) => AstroVideoDetailsScreen(category:details[index]['astrologerID'])));
                               },
                               child: Column(
                                 children: [

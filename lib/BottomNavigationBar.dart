@@ -80,13 +80,11 @@ class _BottomNavigationState extends State<BottomNavigation> with SingleTickerPr
               Flexible(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: Expanded(
-                    child: AutoSizeText(
-                      iconTextList[index],
-                      maxLines: 1,
-                      style: TextStyle(color: color),
-                      group: autoSizeGroup,
-                    ),
+                  child: AutoSizeText(
+                    iconTextList[index],
+                    maxLines: 2,
+                    style: TextStyle(color: color),
+                    group: autoSizeGroup,
                   ),
                 ),
               )

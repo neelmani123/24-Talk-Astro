@@ -87,7 +87,7 @@ class _TalkToAstroState extends State<TalkToAstro> {
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (ctx) => AstroDetailsScreen()));
+                                        builder: (ctx) => AstroDetailsScreen(category:details[index]['astrologerID'])));
                               },
                               child: Column(
                                 children: [

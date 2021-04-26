@@ -580,34 +580,32 @@ class _HomeState extends State<Home> {
                             ),
                             padding:
                             EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-                            child: Expanded(
-                              child: Column(
-                                children: [
-                                  Image.asset(
-                                    shopping[i]["images"],
-                                    height: 100,
-                                  ),
-                                  InkWell(
-                                    onTap: () {
-                                     print(details[i]['categoryID']);
-                                     Navigator.push(context, MaterialPageRoute(
-                                         builder: (ctx) =>
-                                             CategoryMall(
-                                               id: details[i]['categoryID'],text: details[i]['categoryname'],))
-                                     );
-                                    },
-                                    child: Container(
-                                        margin: EdgeInsets.only(top: 15),
-                                        child: Text(
+                            child: Column(
+                              children: [
+                                Image.asset(
+                                  shopping[i]["images"],
+                                  height: 100,
+                                ),
+                                InkWell(
+                                  onTap: () {
+                                    print(details[i]['categoryID']);
+                                    Navigator.push(context, MaterialPageRoute(
+                                        builder: (ctx) =>
+                                            CategoryMall(
+                                              id: details[i]['categoryID'],text: details[i]['categoryname'],))
+                                    );
+                                  },
+                                  child: Container(
+                                      margin: EdgeInsets.only(top: 15),
+                                      child: Text(
                                         details[i]['categoryname'],
-                                          style: TextStyle(
-                                              color: Color(pinkColor),
-                                              fontWeight: FontWeight.w500,
-                                              fontSize: 17),
-                                        )),
-                                  )
-                                ],
-                              ),
+                                        style: TextStyle(
+                                            color: Color(pinkColor),
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 17),
+                                      )),
+                                )
+                              ],
                             ),
                           ),
                         ),

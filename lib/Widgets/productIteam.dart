@@ -13,6 +13,7 @@ class ProductItem extends StatefulWidget {
   final String title;
   final String imageUrl;
   final String price;
+
   ProductItem({@required this.id, @required this.title, @required this.imageUrl,@required this.price});
 
   @override
@@ -21,6 +22,8 @@ class ProductItem extends StatefulWidget {
 
 class _ProductItemState extends State<ProductItem> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  bool _status=true;
+  String qty="1";
 
   @override
   void initState() {
@@ -43,19 +46,34 @@ class _ProductItemState extends State<ProductItem> {
       print("ProductId Is:${widget.id}");
       setState(() {
         _prefs.setString('qty1', res.qty);
-        Fluttertoast.showToast(msg: res.message,
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,);
-
-        /*_scaffoldKey.currentState.showSnackBar(
-            new SnackBar(
-                content: new Text(res.message)));*/
+        qty=res.qty;
       });
+    }
+    else
+    {
+      print("SigUp fAILED");
+    }
+  }
 
-     /* Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => UserList()),
-      );*/
+  _minusAddToCard()async
+  {
+    setState(() {
+      isLoading = true;
+    });
+    final _prefs = await SharedPreferences.getInstance();
+    userId1 = _prefs.getString('userID') ?? '';
+    var res = await _httpService.minusToCard(user_id:userId1,productID: widget.id);
+    if(res.result == "success")
+    {
+      print("ProductId Is:${widget.id}");
+      setState(() {
+        _prefs.setString('qty1', res.qty);
+        qty=res.qty;
+        if(qty==0)
+          {
+            _status=true;
+          }
+      });
     }
     else
     {
@@ -134,11 +152,12 @@ class _ProductItemState extends State<ProductItem> {
               ),
 
 
-              InkWell(
+             _status?InkWell(
                 onTap: ()
                 {
-                  _addToCard();
-
+                  setState(() {
+                    _status=false;
+                  });
                 },
                 child: Container(
                   decoration: BoxDecoration(
@@ -158,7 +177,67 @@ class _ProductItemState extends State<ProductItem> {
                     textAlign: TextAlign.center,
                   ),
                 ),
-              ),
+              ):Container(
+               child:Row(
+                 mainAxisAlignment: MainAxisAlignment.start,
+                 children: [
+                   InkWell(
+                     onTap: (){
+                       _minusAddToCard();
+                     },
+                     child: Container(
+                         padding: EdgeInsets.all(2),
+                         margin: EdgeInsets.symmetric(horizontal: 20),
+                         decoration: BoxDecoration(
+                             color: Color(pinkColor),
+                             borderRadius:
+                             BorderRadius.circular(20)),
+                         child: Icon(
+                           Icons.remove,
+                           color: Colors.white,
+                         )),
+                   ),
+                   Container(
+                     child: Text(qty),
+                   ),
+                   InkWell(
+                     onTap: (){
+                       _addToCard();
+                     },
+                     child: Container(
+                         padding: EdgeInsets.all(2),
+                         margin: EdgeInsets.symmetric(horizontal: 20),
+                         decoration: BoxDecoration(
+                             color: Color(pinkColor),
+                             borderRadius:
+                             BorderRadius.circular(20)),
+                         child: Icon(
+                           Icons.add,
+                           color: Colors.white,
+                         )),
+                   ),
+                   /*Container(
+                     width: 50,
+                     decoration: BoxDecoration(
+                         color: Color(pinkColor),
+                         borderRadius: BorderRadius.only(
+                             bottomLeft: Radius.circular(10),
+                             bottomRight: Radius.circular(10))),
+                     padding: const EdgeInsets.symmetric(
+                       vertical: 10,
+                     ),
+                     child: Text(
+                       "Checkout",
+                       style: TextStyle(
+                           color: Colors.white,
+                           fontSize: 19,
+                           fontWeight: FontWeight.w600),
+                       textAlign: TextAlign.center,
+                     ),
+                   ),*/
+                 ],
+               ),
+             ),
             ],
           ),
         ),

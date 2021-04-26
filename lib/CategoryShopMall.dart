@@ -28,6 +28,7 @@ class _CategoryMallState extends State<CategoryMall> {
   bool _isLoading=true;
   List details1=[];
  String quantity="";
+  bool _status=false;
 
   //Api for the categoryMall Details
   Future getCategory_details() async
@@ -74,7 +75,7 @@ class _CategoryMallState extends State<CategoryMall> {
         actions: [
           Badge(child: IconButton(icon: Icon(Icons.shopping_cart), onPressed: (){
             Navigator.push(context, MaterialPageRoute(builder: (ctx) => CartScreen()));
-          }), value: quantity==null?0:quantity,color: Color(blueGreyColor),),
+          }), value: "1",color: Color(blueGreyColor),),
         ],
       ),
       body: Container(

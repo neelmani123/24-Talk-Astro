@@ -12,6 +12,7 @@ class ShoppingMall extends StatefulWidget {
 
 class _ShoppingMallState extends State<ShoppingMall> {
   bool _isLoading=true;
+
   final List<Map<String, String>> shopping = [
     {"id": "a3", "images": "Assets/Images/red_panna.png", "text": "Red Panna"},
     {"id": "a1", "images": "Assets/Images/gemstone.png", "text": "Gemstone"},

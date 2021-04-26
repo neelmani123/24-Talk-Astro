@@ -34,9 +34,9 @@ class _CustomDrawerState extends State<CustomDrawer> {
     setState(() {
       phone = _prefs.getString('mobile') ?? '';
       email = _prefs.getString('email') ?? '';
-      image = _prefs.getString('image') ?? '';
+      image = _prefs.getString('image_url') ?? '';
       name = _prefs.getString('name') ?? '';
-      print("Name is:${name}");
+      print("Name is:${image}");
     });
     if (Platform.isAndroid) {
       _deviceType = 'Android';
@@ -86,8 +86,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
                           },
                           child: CircleAvatar(
                             radius: 40,
-                            child:
-                                Image.asset("Assets/Images/profile_pick.png"),
+                           backgroundImage: NetworkImage(image),
+                            backgroundColor: Colors.transparent,
                           ),
                         ),
                       ),

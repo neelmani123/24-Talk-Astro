@@ -1,10 +1,19 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:online_astro24/Chat_With_Astro/chatScreen.dart';
+import 'package:online_astro24/Modal/GetAstroDetails.dart';
+import 'package:online_astro24/httpHelper/httpHelper.dart';
 import 'package:online_astro24/utils/setup.dart';
 
 
-class AstroVideoDetailsScreen extends StatelessWidget {
+class AstroVideoDetailsScreen extends StatefulWidget {
+  String category;
+  AstroVideoDetailsScreen({this.category});
+   @override
+  _AstroVideoDetailsScreenState createState() => _AstroVideoDetailsScreenState();
+}
+
+class _AstroVideoDetailsScreenState extends State<AstroVideoDetailsScreen> {
   final List<Map<String, String>> gallery = [
     {"images": "Assets/Images/a_image.png"},
     {
@@ -15,6 +24,48 @@ class AstroVideoDetailsScreen extends StatelessWidget {
       "images": "Assets/Images/a_image_4.png",
     }
   ];
+  bool isLoading;
+  HttpService _httpService = HttpService();
+  GetAstroDetails _getAstroDetails;
+  String name="";
+  String image="";
+  String skill="";
+  String language="";
+  String categor="";
+  String exp="";
+  String city="";
+  String state="";
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getAstroDetails();
+  }
+
+  getAstroDetails() async
+  {
+    setState(() {
+      isLoading = true;
+    });
+    var res = await _httpService.getAstroDetails(category:widget.category);
+    if(res.result=="success")
+    {
+      _getAstroDetails=res;
+      print(res.details.realName);
+      setState(() {
+        isLoading=false;
+        name=res.details.realName;
+        skill=res.details.skill;
+        language=res.details.language;
+        categor=res.details.category;
+        exp=res.details.exp;
+        city=res.details.city;
+        state=res.details.state;
+        image=res.details.profile;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +84,7 @@ class AstroVideoDetailsScreen extends StatelessWidget {
         child: Column(
           children: [
             Expanded(
-              child: ListView(
+              child: isLoading==true?Container(child: Center(child: CircularProgressIndicator(),),):ListView(
                 children: [
                   Container(
                     margin: EdgeInsets.only(top: 10),
@@ -48,13 +99,14 @@ class AstroVideoDetailsScreen extends StatelessWidget {
                             child: Column(
                               children: [
                                 Container(
-                                    child: Image.asset(
-                                      "Assets/Images/user_pic.png",
+                                    child: CircleAvatar(
+                                      backgroundImage: NetworkImage(image),
+                                      radius: 50,
                                     )),
                                 Container(
                                   margin: EdgeInsets.only(top: 10),
                                   child: Text(
-                                    "Astro Anamika",
+                                    name??'',
                                     style: TextStyle(
                                         fontWeight: FontWeight.w500, fontSize: 21),
                                   ),
@@ -62,7 +114,7 @@ class AstroVideoDetailsScreen extends StatelessWidget {
                                 Container(
                                   margin: EdgeInsets.only(top: 5),
                                   child: Text(
-                                    "Vedic Astrology,Numerology, Vastu",
+                                    skill??'',
                                     textAlign: TextAlign.center,
                                     style:
                                     TextStyle(color: Colors.grey, fontSize: 15),
@@ -81,7 +133,7 @@ class AstroVideoDetailsScreen extends StatelessWidget {
                                         width: 3,
                                       ),
                                       Text(
-                                        "Hindi",
+                                        language??'',
                                       ),
                                       SizedBox(
                                         width: 30,
@@ -162,7 +214,7 @@ class AstroVideoDetailsScreen extends StatelessWidget {
                         Container(
                           margin: EdgeInsets.only(top: 10),
                           child: Text(
-                            "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magnaaliquyam erat, sed diam voluptua. At vero eos et accusam et justoduo dolores et ea rebum. Stet clita kasd gubergren, no sea takimatasanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet,consetetur sadipscing elitr, sed diam nonumy eirmod temporinvidunt ut labore et",style: TextStyle(color: Colors.grey),),
+                            categor??'',style: TextStyle(color: Colors.grey),),
                         ),
                         Container(
                           margin: EdgeInsets.only(top: 8),
@@ -173,7 +225,7 @@ class AstroVideoDetailsScreen extends StatelessWidget {
                                 children: [
                                   Image.asset("Assets/Images/experience.png",height: 30,),
                                   SizedBox(width: 10,),
-                                  Expanded(child:Text("16 Years experience",style: TextStyle(fontSize: 16),),)
+                                  Expanded(child:Text("${exp} Years experience",style: TextStyle(fontSize: 16),),)
                                 ],
                               ),
                               SizedBox(height: 10,),
@@ -182,7 +234,7 @@ class AstroVideoDetailsScreen extends StatelessWidget {
                                 children: [
                                   Image.asset("Assets/Images/a_location.png",height: 25,),
                                   SizedBox(width: 10,),
-                                  Expanded(child: Text("LUCKNOW, UTTAR PRADESH",style: TextStyle(fontSize: 16),))
+                                  Expanded(child: Text("${city}, ${state}",style: TextStyle(fontSize: 16),))
                                 ],
                               ),
                             ],
@@ -210,13 +262,17 @@ class AstroVideoDetailsScreen extends StatelessWidget {
                           margin: EdgeInsets.only(top: 10),
                           child: Row(
                             children: [
-                              Image.asset("Assets/Images/profile_pick.png",height: 50,),
+                              Container(
+                                  child: CircleAvatar(
+                                    backgroundImage: NetworkImage(image),
+                                    radius: 25,
+                                  )),
                               Container(
                                 margin: EdgeInsets.only(left: 10),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Container(child: Text("Martin")),
+                                    Container(child: Text(name??'')),
                                     Row(
                                       children: [
                                         Container(

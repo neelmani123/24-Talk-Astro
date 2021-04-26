@@ -85,7 +85,7 @@ class _AskQuestionAstroState extends State<AskQuestionAstro> {
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (ctx) => AstroDetailsScreen()));
+                                        builder: (ctx) => AstroDetailsScreen(category:details[index]['astrologerID'])));
                               },
                               child: Column(
                                 children: [

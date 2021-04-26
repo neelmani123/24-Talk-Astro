@@ -17,6 +17,8 @@ import 'package:online_astro24/Modal/CreateUserModel.dart';
 import 'package:online_astro24/Modal/UserListData.dart';
 import 'package:online_astro24/Modal/EditUserListModel.dart';
 import 'package:online_astro24/Modal/AddToCart.dart';
+import 'package:online_astro24/Modal/MinusAddToCard.dart';
+import 'package:online_astro24/Modal/GetAstroDetails.dart';
 
 
 class HttpService {
@@ -123,6 +125,25 @@ class HttpService {
     }
 
   }
+  //Minus Add To Card
+  Future<MinusAddToCard>minusToCard({String user_id,String productID})async
+  {
+    Map reqBody={
+      "user_id":user_id,
+      "productID":productID
+    };
+    final response=await _apiHelper.post('cart_minus', reqBody);
+    try{
+      return MinusAddToCard.fromJson(response);
+    }
+    catch(e)
+    {
+      return null;
+    }
+
+  }
+
+
   Future <HorosCopeModel> horos({String sign}) async
   {
     Map reqBody={
@@ -198,6 +219,24 @@ class HttpService {
     try {
       return GetProfileModal.fromJson(response);
     } catch (e) {
+      return null;
+    }
+  }
+
+  //Get Astrologer Details
+  Future<GetAstroDetails>getAstroDetails({String category}) async
+  {
+    await _init();
+    Map reqBody={
+      "user_id":userID,
+      "astrologer_id":category
+    };
+    final response=await _apiHelper.post('astrologer_detail', reqBody);
+    try{
+      return GetAstroDetails.fromJson(response);
+    }
+    catch(e)
+    {
       return null;
     }
   }

@@ -91,7 +91,7 @@ class _ChatNowScreenState extends State<ChatNowScreen> {
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (ctx) => AstroDetailsScreen()));
+                                        builder: (ctx) => AstroDetailsScreen(category:details[index]['astrologerID'])));
                               },
                               child: Column(
                                 children: [

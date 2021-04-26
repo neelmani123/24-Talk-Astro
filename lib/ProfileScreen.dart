@@ -38,6 +38,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   HttpService _httpService = HttpService();
   bool isLoading;
   bool isLoading1;
+  String imageUrl="";
 
   //Here get Image from Camera and Gallery
   void getImage(source) async {
@@ -92,11 +93,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   callWebService() async
   {
-
     setState(() {
       isLoading = true;
     });
-
+    final prefs = await SharedPreferences.getInstance();
     var res = await _httpService.getProfile();
     if(res.result == "true")
     {
@@ -107,6 +107,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
       _mobileNumber.text = res.user.contact_no;
       _timeOfBirth.text = res.user.birth_time;
       _gender.text = res.user.gender;
+      imageUrl=res.user.image;
+      setState(() {
+        prefs.setString('image_url', imageUrl);
+      });
     }
     else
     {
@@ -168,7 +172,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           child: CircleAvatar(
                               radius: 50,
                               backgroundImage: _imageFiler == null
-                                  ? AssetImage('Assets/Images/profile_pick.png')
+                                  ? NetworkImage(imageUrl)
                                   : FileImage(File(_imageFiler.path))),
                         ),
                       ),
