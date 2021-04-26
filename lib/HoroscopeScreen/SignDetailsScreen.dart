@@ -77,7 +77,7 @@ class _SignDetailsScreenState extends State<SignDetailsScreen> {
             Container(
               margin: EdgeInsets.only(top: 20),
               alignment: Alignment.center,
-              child: Text(current_date,
+              child: Text(current_date??'',
                 style: TextStyle(
                   fontSize: 18,
                     color: Color(pinkColor), fontWeight: FontWeight.w500),
@@ -103,7 +103,7 @@ class _SignDetailsScreenState extends State<SignDetailsScreen> {
                     height: 140,
                   ),
                   Text(
-                    widget.title,
+                    widget.title??'',
                     style: TextStyle(
                         color: Color(pinkColor),
                         fontSize: 26,
@@ -128,7 +128,7 @@ class _SignDetailsScreenState extends State<SignDetailsScreen> {
                                 borderRadius: BorderRadius.circular(40)),
                           ),
                           Text("Lucky color"),
-                          Text(color),
+                          Text(color??''),
                         ],
                       )),
                       Expanded(

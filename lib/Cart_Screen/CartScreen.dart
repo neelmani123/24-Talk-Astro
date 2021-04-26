@@ -1,9 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:online_astro24/AddAddress/AddAddressScreen.dart';
 import 'package:online_astro24/providers/cart.dart';
 import 'package:online_astro24/utils/cartIteam.dart';
 import 'package:online_astro24/utils/setup.dart';
 import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CartScreen extends StatefulWidget {
   static const String cartScreen = "/CartScreen";
@@ -14,6 +18,38 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
+  String userId1="";
+  List details=[];
+  bool _isLoading=true;
+
+  
+  Future getCardDetails()async{
+    final _prefs = await SharedPreferences.getInstance();
+    userId1 = _prefs.getString('userID') ?? '';
+    Map<String,String>headers={'Content-Type':'application/json'};
+    final res=jsonEncode({"user_id":userId1,});
+    var response=await http.post("https://talkastro.devclub.co.in/userapi/cart_list",headers: headers,body: res);
+    Map data=json.decode(response.body);
+    var status=data['status'];
+    print(status);
+    if(status==true)
+      {
+
+        details=data['carts'] as List;
+        var productdetails=details[0]['cartID'];
+        print(productdetails);
+        setState(() {
+          _isLoading=false;
+        });
+      }
+    
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    getCardDetails();
+    super.initState();
+  }
 
 
   @override
@@ -27,17 +63,123 @@ class _CartScreenState extends State<CartScreen> {
         appBar: AppBar(
           title: Text("My Cart"),
         ),
-        body: myCart.length!= 0
-            ? Container(
+        body: _isLoading?Container(child: Center(child: CircularProgressIndicator(),),):
+             Container(
                 margin: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
                 child: Column(
                   children: [
                     Expanded(
                       child: ListView.builder(
-                        itemCount: myCart.length,
+                        itemCount: details.length,
                         itemBuilder: (ctx,i)
                         {
-                          return CartData();
+                          return Container(
+                            margin: EdgeInsets.only(bottom: 10),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey,
+                                  offset: Offset(0.0, 1.0), //(x,y)
+                                  blurRadius: 4.0,
+                                ),
+                              ],
+                            ),
+                            child: Container(
+                              margin:
+                              EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    child: Image.network(
+                                      details[i]['product_details']['image'],
+                                      height: 70,
+                                    ),
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.symmetric(horizontal: 20),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          child: Text(
+                                            '\u{20B9} ${details[i]['actual_price']} /-',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w700),
+                                          ),
+                                          margin: EdgeInsets.only(bottom: 8),
+                                        ),
+                                        Container(
+                                          child: Text(details[i]['product_details']['product_name']),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Container(
+                                    child: Column(
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Container(
+                                                padding: EdgeInsets.all(2),
+                                                decoration: BoxDecoration(
+                                                    color: Color(pinkColor),
+                                                    borderRadius:
+                                                    BorderRadius.circular(20)),
+                                                child: Icon(
+                                                  Icons.remove,
+                                                  color: Colors.white,
+                                                )),
+                                            Container(
+                                                margin: EdgeInsets.symmetric(
+                                                    horizontal: 10),
+                                                child: Text(
+                                                  details[i]['qty']??'',
+                                                  style: TextStyle(
+                                                      color: Color(pinkColor),
+                                                      fontSize: 18),
+                                                )),
+                                            Container(
+                                                padding: EdgeInsets.all(2),
+                                                decoration: BoxDecoration(
+                                                    color: Color(pinkColor),
+                                                    borderRadius:
+                                                    BorderRadius.circular(20)),
+                                                child: Icon(
+                                                  Icons.add,
+                                                  color: Colors.white,
+                                                )),
+                                          ],
+                                        ),
+                                        /*InkWell(
+                    onTap: () {
+                      cartBottomSheet(context);
+                    },
+                    child: Container(
+                      margin: EdgeInsets.only(top: 10),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.delete,
+                            color: Colors.grey,
+                          ),
+                          Text(
+                            "Remove",
+                            style:
+                            TextStyle(color: Colors.grey),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )*/
+                                      ],
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          );
                         },
                       ),
                     ),
@@ -195,14 +337,17 @@ class _CartScreenState extends State<CartScreen> {
                     ),
                     InkWell(
                       onTap: () {
-
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (ctx) => AddAddress()));
                       },
                       child: Container(
                         width: double.infinity,
                         margin: EdgeInsets.only(left: 10, right: 10, ),
                         padding: EdgeInsets.symmetric(vertical: 15, horizontal: 25),
                         child: Text(
-                          "PROCEED",
+                          "Continue",
                           style: TextStyle(
                               color: Colors.white,
                               fontSize: 18,
@@ -226,7 +371,7 @@ class _CartScreenState extends State<CartScreen> {
                   ],
                 ),
               )
-            : Center(
+            /*: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -254,7 +399,8 @@ class _CartScreenState extends State<CartScreen> {
                         ))
                   ],
                 ),
-              ));
+              )*/
+    );
   }
 }
 

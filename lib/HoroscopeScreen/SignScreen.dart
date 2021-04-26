@@ -107,7 +107,7 @@ class SignScreen extends StatelessWidget {
                         title: sign[i]["title"],
                         onTap: () {
 
-                          Navigator.push(context, MaterialPageRoute(builder: (ctx) => SignDetailsScreen(imageUrl: sign[i]["images"],)));
+                          Navigator.push(context, MaterialPageRoute(builder: (ctx) => SignDetailsScreen(imageUrl: sign[i]["images"],title: sign[i]['title'],)));
 
 
                         },
