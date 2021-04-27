@@ -40,6 +40,7 @@ class _ProductItemState extends State<ProductItem> {
     });
     final _prefs = await SharedPreferences.getInstance();
     userId1 = _prefs.getString('userID') ?? '';
+    _prefs.setString('product_id', widget.id);
     var res = await _httpService.addToCard(user_id:userId1,productID: widget.id);
     if(res.result == "success")
     {

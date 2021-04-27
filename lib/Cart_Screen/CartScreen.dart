@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:online_astro24/AddAddress/AddAddressScreen.dart';
+import 'package:online_astro24/httpHelper/httpHelper.dart';
 import 'package:online_astro24/providers/cart.dart';
 import 'package:online_astro24/utils/cartIteam.dart';
 import 'package:online_astro24/utils/setup.dart';
@@ -18,9 +19,11 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
-  String userId1="";
+  String userId1="",productId="";
   List details=[];
   bool _isLoading=true;
+  String qty="1";
+  var total;
 
   
   Future getCardDetails()async{
@@ -31,6 +34,8 @@ class _CartScreenState extends State<CartScreen> {
     var response=await http.post("https://talkastro.devclub.co.in/userapi/cart_list",headers: headers,body: res);
     Map data=json.decode(response.body);
     var status=data['status'];
+    total=data['total'];
+    print("Total is:${total}");
     print(status);
     if(status==true)
       {
@@ -44,6 +49,57 @@ class _CartScreenState extends State<CartScreen> {
       }
     
   }
+  bool isLoading=true;
+
+  HttpService _httpService = HttpService();
+
+  _addToCard() async{
+    setState(() {
+     // isLoading = true;
+    });
+    final _prefs = await SharedPreferences.getInstance();
+    userId1 = _prefs.getString('userID') ?? '';
+    productId=_prefs.getString('product_id');
+    var res = await _httpService.addToCard(user_id:userId1,productID: "1");
+    if(res.result == "success")
+    {
+      setState(() {
+        _prefs.setString('qty1', res.qty);
+        qty=res.qty;
+      });
+    }
+    else
+    {
+      print("SigUp fAILED");
+    }
+  }
+
+  _minusAddToCard()async
+  {
+    setState(() {
+      _isLoading = false;
+    });
+    final _prefs = await SharedPreferences.getInstance();
+    userId1 = _prefs.getString('userID') ?? '';
+    var res = await _httpService.minusToCard(user_id:userId1,productID: "1");
+    if(res.result == "success")
+    {
+      setState(() {
+        _prefs.setString('qty1', res.qty);
+        qty=res.qty;
+        _isLoading=false;
+        if(qty==0)
+        {
+     //     _status=true;
+        }
+      });
+    }
+    else
+    {
+      print("SigUp fAILED");
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -54,11 +110,6 @@ class _CartScreenState extends State<CartScreen> {
 
   @override
   Widget build(BuildContext context) {
-
-   List myCart = [
-     "text",
-     "text",
-   ];
     return Scaffold(
         appBar: AppBar(
           title: Text("My Cart"),
@@ -121,16 +172,24 @@ class _CartScreenState extends State<CartScreen> {
                                       children: [
                                         Row(
                                           children: [
-                                            Container(
-                                                padding: EdgeInsets.all(2),
-                                                decoration: BoxDecoration(
-                                                    color: Color(pinkColor),
-                                                    borderRadius:
-                                                    BorderRadius.circular(20)),
-                                                child: Icon(
-                                                  Icons.remove,
-                                                  color: Colors.white,
-                                                )),
+                                            InkWell(
+                                              onTap:(){
+                                                _minusAddToCard();
+                                                setState(() {
+                                                  //_isLoading=true;
+                                                });
+                                              },
+                                              child: Container(
+                                                  padding: EdgeInsets.all(2),
+                                                  decoration: BoxDecoration(
+                                                      color: Color(pinkColor),
+                                                      borderRadius:
+                                                      BorderRadius.circular(20)),
+                                                  child: Icon(
+                                                    Icons.remove,
+                                                    color: Colors.white,
+                                                  )),
+                                            ),
                                             Container(
                                                 margin: EdgeInsets.symmetric(
                                                     horizontal: 10),
@@ -140,16 +199,21 @@ class _CartScreenState extends State<CartScreen> {
                                                       color: Color(pinkColor),
                                                       fontSize: 18),
                                                 )),
-                                            Container(
-                                                padding: EdgeInsets.all(2),
-                                                decoration: BoxDecoration(
-                                                    color: Color(pinkColor),
-                                                    borderRadius:
-                                                    BorderRadius.circular(20)),
-                                                child: Icon(
-                                                  Icons.add,
-                                                  color: Colors.white,
-                                                )),
+                                            InkWell(
+                                              onTap: (){
+                                                _addToCard();
+                                              },
+                                              child: Container(
+                                                  padding: EdgeInsets.all(2),
+                                                  decoration: BoxDecoration(
+                                                      color: Color(pinkColor),
+                                                      borderRadius:
+                                                      BorderRadius.circular(20)),
+                                                  child: Icon(
+                                                    Icons.add,
+                                                    color: Colors.white,
+                                                  )),
+                                            ),
                                           ],
                                         ),
                                         /*InkWell(
@@ -322,7 +386,7 @@ class _CartScreenState extends State<CartScreen> {
                                           fontWeight: FontWeight.w600),
                                     ),
                                     Text(
-                                      "Rs.10,800/-",
+                                      "Rs.${total}/-",
                                       style: TextStyle(
                                           fontSize: 17,
                                           fontWeight: FontWeight.w800),
