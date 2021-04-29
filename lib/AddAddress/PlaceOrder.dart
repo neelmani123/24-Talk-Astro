@@ -4,6 +4,7 @@ import 'package:online_astro24/utils/setup.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:online_astro24/Successfull.dart';
 
 class PlaceOrder extends StatefulWidget {
   String address_id;
@@ -245,10 +246,11 @@ class _PlaceOrderState extends State<PlaceOrder> {
                       onTap: () async {
                         print("Address id Is:${widget.address_id}");
                         setState(() {
-                           _isLoading = true;
+                           //_isLoading = true;
                         });
-                       // Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)=>PlaceOrder()));
+                        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)=>Successfull()));
                       },
+
                       child: Container(
                         width: double.infinity,
                         margin: EdgeInsets.only(
