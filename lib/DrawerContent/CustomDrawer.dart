@@ -14,6 +14,7 @@ import 'package:share/share.dart';
 import 'package:online_astro24/DrawerContent/UserList.dart';
 import 'package:online_astro24/DrawerContent/Question_history.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:online_astro24/MyReport/MyReport.dart';
 
 class CustomDrawer extends StatefulWidget {
   @override
@@ -142,7 +143,9 @@ class _CustomDrawerState extends State<CustomDrawer> {
                     drawerTiles(
                         imageUrl: "Assets/Icons/p_report.png",
                         title: "My Report",
-                        onTap: () {}),
+                        onTap: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (BuildContext)=>MyReport()));
+                        }),
                     drawerTiles(
                         imageUrl: "Assets/Icons/Icon_material-share.png",
                         title: "Share The App",
@@ -161,7 +164,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                         imageUrl: "Assets/Icons/my_order.png",
                         title: "My Order",
                         onTap: () {
-                          Navigator.pushNamed(context, CartScreen.cartScreen);
+                          //Navigator.pushNamed(context, CartScreen.cartScreen);
                         }),
                     drawerTiles(
                         imageUrl: "Assets/Icons/p_wallet.png",

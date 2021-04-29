@@ -22,7 +22,7 @@ class _CartScreenState extends State<CartScreen> {
   String userId1="",productId="";
   List details=[];
   bool _isLoading=true;
-  String qty="1";
+  String qty="";
   var total;
 
   
@@ -39,24 +39,21 @@ class _CartScreenState extends State<CartScreen> {
     print(status);
     if(status==true)
       {
-
         details=data['carts'] as List;
-        var productdetails=details[0]['cartID'];
-        print(productdetails);
         setState(() {
           _isLoading=false;
+          for(int i=0;i<details.length;i++)
+            {
+              qty=details[i]['qty'];
+            }
         });
       }
     
   }
-  bool isLoading=true;
 
   HttpService _httpService = HttpService();
 
   _addToCard() async{
-    setState(() {
-     // isLoading = true;
-    });
     final _prefs = await SharedPreferences.getInstance();
     userId1 = _prefs.getString('userID') ?? '';
     productId=_prefs.getString('product_id');
@@ -66,6 +63,7 @@ class _CartScreenState extends State<CartScreen> {
       setState(() {
         _prefs.setString('qty1', res.qty);
         qty=res.qty;
+        _isLoading=false;
       });
     }
     else
@@ -76,9 +74,6 @@ class _CartScreenState extends State<CartScreen> {
 
   _minusAddToCard()async
   {
-    setState(() {
-      _isLoading = false;
-    });
     final _prefs = await SharedPreferences.getInstance();
     userId1 = _prefs.getString('userID') ?? '';
     var res = await _httpService.minusToCard(user_id:userId1,productID: "1");
@@ -176,7 +171,7 @@ class _CartScreenState extends State<CartScreen> {
                                               onTap:(){
                                                 _minusAddToCard();
                                                 setState(() {
-                                                  //_isLoading=true;
+                                                  _isLoading=true;
                                                 });
                                               },
                                               child: Container(
@@ -194,7 +189,7 @@ class _CartScreenState extends State<CartScreen> {
                                                 margin: EdgeInsets.symmetric(
                                                     horizontal: 10),
                                                 child: Text(
-                                                  details[i]['qty']??'',
+                                                  qty??'',
                                                   style: TextStyle(
                                                       color: Color(pinkColor),
                                                       fontSize: 18),
@@ -202,6 +197,9 @@ class _CartScreenState extends State<CartScreen> {
                                             InkWell(
                                               onTap: (){
                                                 _addToCard();
+                                                setState(() {
+                                                  _isLoading=true;
+                                                });
                                               },
                                               child: Container(
                                                   padding: EdgeInsets.all(2),
